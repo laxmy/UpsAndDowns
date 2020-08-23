@@ -1,8 +1,12 @@
 import React,{useEffect, useState} from 'react'
-import { View, Text ,Button} from 'react-native'
+import { View, Text ,Button, SafeAreaView, FlatList, StyleSheet} from 'react-native'
 import { useDispatch , useSelector } from 'react-redux'
+
 import { getMostActive } from '../store/actions/active'
-import Carousel from 'react-native-snap-carousel'
+import StockListItem from '../components/stockListItem'
+
+import * as Constants from '../constants'
+import StylisedText from '../components/stylisedText'
 
 const sliderWidth = 300;
 const slideWidth = 250;
@@ -21,36 +25,42 @@ const Dashboard = props => {
       console.log(err.message);
     }
   }
-    useEffect(()=>{
-      setIsLoading(true)
-      fetchData()
+  useEffect(()=>{
+    setIsLoading(true)
+    fetchData()
+    setIsLoading(false)
   },[dispatch])
   
-  setIsLoading(false)
-  console.log(mostActive)
-  const slides = mostActive.map((entry, index) => {
+  const renderSlide = ({item, index}) => {
     return (
-        <View key={`entry-${index}`} style={styles.slide}>
-            <Text style={styles.title}>{ entry.title }</Text>
-        </View>
+       <StockListItem stock ={item} navigateToStockDetail={()=> props.navigation.navigate('Detail',{stockItem: item})} />
     );
-});
+}
 
 
-    return isLoading ? (
+    return isLoading?(
         <View>
             <Text> Dashboard </Text>
             <Button title='Move on' onPress={()=> props.navigation.navigate('Detail')}></Button>
-        </View>
-    ):(
-      <Carousel
-      ref={(carousel) => { this._carousel = carousel; }}
-      sliderWidth={sliderWidth}
-      itemWidth={itemWidth}
-      >
-        { slides }
-      </Carousel>
-    )
+        </View>):(
+          <SafeAreaView style={styles.screen}>
+            <StylisedText textType='sectionHeader'>MOST ACTIVES</StylisedText>
+             <FlatList 
+             data={mostActive}
+             keyExtractor={(item, index) => item.symbol}
+             renderItem={renderSlide}/>
+          </SafeAreaView>
+         
+        )
 }
 
 export default Dashboard    
+
+const styles = StyleSheet.create({
+  screen:{
+    flex: 1,
+    flexDirection:'column',
+    justifyContent:'center',
+    alignItems:'stretch'
+  }
+})

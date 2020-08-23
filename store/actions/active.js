@@ -8,8 +8,9 @@ export const GET_MOSTACTIVE = 'GET_MOSTACTIVE'
 export const getMostActive = () => { 
     return async dispatch => {
         try{
-           // let response = await axios.get(`${iexCloudUrl}/stock/market/collection/list?collectionName=mostactive&token=${apiKey}`)
-           let response = {status: 'OK' , data: initialArray}
+           //let response = await axios.get(`${iexCloudUrl}/stock/market/collection/list?collectionName=mostactive&token=${apiKey}`)
+           //let response = await getMostActiveAsync()
+           let response = await axios.get('https://sandbox.iexapis.com/stable/stock/market/collection/list?collectionName=mostactive&token=Tsk_756f25f00c264637bcbc747049821db1')
            if(!response.status ==='OK')
             {
 
@@ -21,6 +22,12 @@ export const getMostActive = () => {
             console.log(err)
         }
     }
+}
+
+function getMostActiveAsync() {
+  return new Promise((resolve, reject)=>{
+    setTimeout(()=> resolve({status: 'OK',data: initialArray}),1000)
+  })
 }
 
 
